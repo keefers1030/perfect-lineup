@@ -17,33 +17,31 @@ const lineup = [{
 }, {
   id: 9, name: 'Mookie Betts', position: 'OF', teamId: 12, gameId: 123, salary: 3600
 }]
+
 // returns true when the lineup satisfies all conditions
-const validateLineup = (lineup) => {
+const validateLineup = (salaryTotal) => {
+  return (salaryTotal > 45000)
 }
 
-// The total salary of all players in a lineup may not exceed $45,000
+// 1. The total salary of all players in a lineup may not exceed $45,000
 const salaryTotal = lineup.reduce((currentTotal, item) => {
   return item.salary + currentTotal
 }, 0)
 
+// 2. Lineups may not contain more than 2 players from a single team
 const filterLineup = (lineup) => {
+  let teams = []
 
+  for (let i = 0; i < lineup.length; i++) {
+    if (lineup[i].teamId === lineup[i++].teamId) {
+      teams.push(teams.length)
+    }
+
+    return teams
+  }
 }
 
-const lineupFunction = (lineup) => {
-  // returns false when the lineup include >2 players on a single team
-  // if the filter is > 2 players from single team, then return false
-  // const gameMap = lineUp.filter(team => lineUp.teamId)
-  let teams = []
-  for (let i = 0; i < lineup.length; i++) {
-    let teamId = ""
-    if (lineup[i].teamId === lineup[i].teamId)) {
-      teamId++
-    }
-    return teamId
-  }
-
-  //console.log(lineupFunction(lineup))
-  console.log(salaryTotal)
-  console.log('here')
-  module.exports = { validateLineup, salaryTotal }
+console.log(filterLineup(lineup))
+console.log(salaryTotal)
+console.log('here')
+module.exports = { validateLineup, salaryTotal, filterLineup }
