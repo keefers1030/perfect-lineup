@@ -55,9 +55,23 @@ const filterGames = (lineup) => {
   }
 }
 
+// 4. Lineups must contain exactly 3 players with the position of 'OF' 
+// and must also contain exactly 1 player from each of the following positions: 
+// 'P', 'C', '1B', '2B', '3B', 'SS'
 
+const filterPositions = (lineup) => {
+  let OFCount = lineup.filter(it => it.name.includes('OF'))
+  let otherPosition = lineup.filter(it => it.name.includes('P' && 'C' && '1B' && '2B' && '3B' && 'SS'))
+
+
+  return ((OFCount.length === 3) && (otherPosition === true))
+}
+
+console.log('Positions (OF and others)')
+console.log(filterPositions(lineup))
+console.log('No more than 2 players')
 console.log(filterLineup(lineup))
+console.log('No more than 3 players in single game')
 console.log(filterGames(lineup))
 console.log(salaryTotal)
-console.log('here')
 module.exports = validateLineup
