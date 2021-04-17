@@ -19,8 +19,13 @@ const lineup = [{
 }]
 
 // returns true when the lineup satisfies all conditions
-const validateLineup = (salaryTotal) => {
-  return (salaryTotal > 45000)
+const validateLineup = (salaryTotal, filterLineup, filterGames) => {
+  if (salaryTotal < 45000 && filterLineup === true) {
+    return true
+  }
+  else if (!salaryTotal < 45000 && !filterLineup === true) {
+    return false
+  }
 }
 
 // 1. The total salary of all players in a lineup may not exceed $45,000
@@ -35,13 +40,24 @@ const filterLineup = (lineup) => {
   for (let i = 0; i < lineup.length; i++) {
     if (lineup[i].teamId === lineup[i++].teamId) {
       teams.push(teams.length)
-    }
-
-    return teams
+    } if (teams.length > 2) return false
   }
 }
 
+// 3. Lineups may not contain more than 3 players from a single game
+const filterGames = (lineup) => {
+  let games = []
+
+  for (let i = 0; i < lineup.length; i++) {
+    if (lineup[i].gameId === lineup[i++].gameId) {
+      games.push(games.length)
+    } if (games.length > 3) return false
+  }
+}
+
+
 console.log(filterLineup(lineup))
+console.log(filterGames(lineup))
 console.log(salaryTotal)
 console.log('here')
-module.exports = { validateLineup, salaryTotal, filterLineup }
+module.exports = validateLineup
