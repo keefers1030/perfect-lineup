@@ -19,13 +19,8 @@ const lineup = [{
 }]
 
 // returns true when the lineup satisfies all conditions
-const validateLineup = (salaryTotal, filterLineup, filterGames, filterPositions) => {
-  if (salaryTotal < 45000 && filterLineup === true && filterGames === true && filterPositions === true) {
-    return true
-  }
-  else if (salaryTotal > 45000 || filterLineup === false || filterGames === false || filterPositions === false) {
-    return false
-  }
+const validateLineup = (lineup) => {
+  return (salaryTotal < 45000 && filterLineup === true)
 }
 
 // 1. The total salary of all players in a lineup may not exceed $45,000
@@ -33,26 +28,27 @@ const salaryTotal = lineup.reduce((currentTotal, item) => {
   return item.salary + currentTotal
 }, 0)
 
+
 // 2. Lineups may not contain more than 2 players from a single team
 const filterLineup = (lineup) => {
-  let teams = []
+  const teams = [11, 12, 14, 15, 18, 20, 22, 27]
 
-  for (let i = 0; i < lineup.length; i++) {
-    if (lineup[i].teamId === lineup[i++].teamId) {
-      teams.push(teams.length)
-    } if (teams.length > 2) return false
-  }
+  let teamMate = lineup.reduce(teamIdentity => {
+    return !teams.includes(teamIdentity) < 2
+  })
+
+  return teamMate
 }
+
 
 // 3. Lineups may not contain more than 3 players from a single game
 const filterGames = (lineup) => {
-  let games = []
+  const games = [123, 115, 101, 134, 126, 131, 119, 123, 124]
 
-  for (let i = 0; i < lineup.length; i++) {
-    if (lineup[i].gameId === lineup[i++].gameId) {
-      games.push(games.length)
-    } if (games.length > 3) return false
-  }
+  let gameMate = lineup.reduce(gameIdentity => {
+    return !games.includes(gameIdentity) < 2
+  })
+  return gameMate
 }
 
 // 4. Lineups must contain exactly 3 players with the position of 'OF' 
@@ -65,14 +61,15 @@ const filterPositions = (lineup) => {
 
   return (lineup.includes(otherPosition) && (OFCount.length === 3))
 }
-
-console.log('Positions (OF and others)')
-console.log(filterPositions(lineup))
+console.log('ValidateLineup')
+console.log(validateLineup(lineup))
+console.log('Salary Total')
+console.log(salaryTotal)
 console.log('No more than 2 players')
 console.log(filterLineup(lineup))
 console.log('No more than 3 players in single game')
 console.log(filterGames(lineup))
-console.log('Salary Total')
-console.log(salaryTotal)
+console.log('Positions (OF and others)')
+console.log(filterPositions(lineup))
 
 module.exports = validateLineup
