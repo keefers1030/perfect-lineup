@@ -3,7 +3,7 @@ const lineup = [{
 }, {
   id: 2, name: 'Yadier Molina', position: 'C', teamId: 22, gameId: 115, salary: 2500
 }, {
-  id: 3, name: 'Mitch Moreland', position: '1B', teamId: 12, gameId: 123, salary: 2800
+  id: 3, name: 'Luke Voit', position: '1B', teamId: 20, gameId: 115, salary: 2800
 }, {
   id: 4, name: 'Dee Gordon', position: '2B', teamId: 18, gameId: 101, salary: 3200
 }, {
@@ -19,11 +19,11 @@ const lineup = [{
 }]
 
 // returns true when the lineup satisfies all conditions
-const validateLineup = (salaryTotal, filterLineup, filterGames) => {
-  if (salaryTotal < 45000 && filterLineup === true) {
+const validateLineup = (salaryTotal, filterLineup, filterGames, filterPositions) => {
+  if (salaryTotal < 45000 && filterLineup === true && filterGames === true && filterPositions === true) {
     return true
   }
-  else if (!salaryTotal < 45000 && !filterLineup === true) {
+  else if (salaryTotal > 45000 || filterLineup === false || filterGames === false || filterPositions === false) {
     return false
   }
 }
@@ -60,11 +60,10 @@ const filterGames = (lineup) => {
 // 'P', 'C', '1B', '2B', '3B', 'SS'
 
 const filterPositions = (lineup) => {
-  let OFCount = lineup.filter(it => it.name.includes('OF'))
-  let otherPosition = lineup.filter(it => it.name.includes('P' && 'C' && '1B' && '2B' && '3B' && 'SS'))
+  let OFCount = lineup.filter(it => it.position.includes('OF'))
+  const otherPosition = ['P', 'C', '1B', '2B', '3B', 'SS']
 
-
-  return ((OFCount.length === 3) && (otherPosition === true))
+  return (lineup.includes(otherPosition) && (OFCount.length === 3))
 }
 
 console.log('Positions (OF and others)')
@@ -73,5 +72,7 @@ console.log('No more than 2 players')
 console.log(filterLineup(lineup))
 console.log('No more than 3 players in single game')
 console.log(filterGames(lineup))
+console.log('Salary Total')
 console.log(salaryTotal)
+
 module.exports = validateLineup
