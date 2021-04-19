@@ -20,10 +20,12 @@ const lineup = [{
 
 // returns true when the lineup satisfies all conditions
 const validateLineup = (lineup) => {
-  if (salaryTotal < 45000 && filterLineup(lineup) === true && filterGames(lineup) === true && filterPositions(lineup) === true) {
+  if (salaryTotal < 45000 && filterLineup === true) {
     return true
   }
-  else return false
+  else if (salaryTotal > 45000 || filterLineup === false || filterGames === false || filterPositions === false) {
+    return false
+  }
 }
 
 // 1. The total salary of all players in a lineup may not exceed $45,000
@@ -31,28 +33,51 @@ const salaryTotal = lineup.reduce((currentTotal, item) => {
   return item.salary + currentTotal
 }, 0)
 
-
 // 2. Lineups may not contain more than 2 players from a single team
 const filterLineup = (lineup) => {
-  const noMoreThanTwoPlayers = lineup.reduce((team, player) => {
-    team.hasOwnProperty(player.teamId) ? team[player.teamId]++ : team[player.teamId] = 1
+  // creates a list of only our lineupIds
+  let lineupIds = lineup.map(grade => grade.lineupIdin)
+  // Filters out all the duplicates and get a list of unique Ids
+  let uniqueIds = []
 
-    return team
-  }, {})
+  lineupIds.forEach(lineupIdin => {
+    if (!uniqueIds.includes(lineupIdin)) {
+      uniqueIds.push(lineupIdin)
+    }
+  })
 
-  return Object.values(noMoreThanTwoPlayers).every(player => player <= 2)
+  let numberOfUses = []
+
+  uniqueIds.forEach(uniqueId => {
+    let count = lineupIds.filter(lineupIdin => lineupIdin === uniqueId).length
+
+    numberOfUses.push(count)
+  })
+
+  return Math.max(...numberOfUses) === 2
 }
 
 
 // 3. Lineups may not contain more than 3 players from a single game
 const filterGames = (lineup) => {
-  const gameMate = lineup.reduce((game, gamer) => {
-    game.hasOwnProperty(gamer.gameId) ? game[gamer.gameId]++ : game[gamer.gameId] = 1
+  let individGameID = lineup.map(game => game.gamerId)
+  let uniqueGameId = []
 
-    return game
-  }, {})
+  individGameID.forEach(gamerId => {
+    if (!uniqueGameId.includes(gamerId)) {
+      uniqueGameId.push(gamerId)
+    }
+  })
 
-  return Object.values(gameMate).every(gamer => gamer <= 3)
+  let numberOfUses = []
+
+  uniqueGameId.forEach(uniqueId => {
+    let count = individGameID.filter(gamerId => gamerId === uniqueId).length
+
+    numberOfUses.push(count)
+  })
+
+  return Math.max(...numberOfUses) === 3
 }
 
 // 4. Lineups must contain exactly 3 players with the position of 'OF' 
@@ -63,13 +88,9 @@ const filterPositions = (lineup) => {
   let OFCount = lineup.filter(it => it.position.includes('OF'))
   const otherPosition = ['P', 'C', '1B', '2B', '3B', 'SS']
 
-  let positions = lineup.reduce(positionIdentity => {
-    return !otherPosition.includes(positionIdentity)
-  })
-
-  return (positions && (OFCount.length === 3))
+  return (lineup.includes(otherPosition) && (OFCount.length === 3))
 }
-console.log('ValidateLineup')
+
 console.log(validateLineup(lineup))
 console.log('Salary Total')
 console.log(salaryTotal)
