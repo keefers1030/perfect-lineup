@@ -20,66 +20,74 @@ const lineup = [{
 
 // returns true when the lineup satisfies all conditions
 const validateLineup = (lineup) => {
-  if (salaryTotal < 45000 && filterLineup === true) {
+  if (lineup.length === 9 &&
+    salaryTotal(lineup) <= 45000 &&
+    filterLineup(lineup) === true &&
+    filterGames(lineup) === true &&
+    filterPositions(lineup) === true) {
     return true
-  }
-  else if (salaryTotal > 45000 || filterLineup === false || filterGames === false || filterPositions === false) {
+  } else {
     return false
   }
 }
 
 // 1. The total salary of all players in a lineup may not exceed $45,000
-const salaryTotal = lineup.reduce((currentTotal, item) => {
-  return item.salary + currentTotal
-}, 0)
+const salaryTotal = (lineup) => {
+  return lineup.reduce((currentTotal, item) => {
+    return item.salary + currentTotal
+  }, 0)
+}
 
 // 2. Lineups may not contain more than 2 players from a single team
 const filterLineup = (lineup) => {
-  // creates a list of only our lineupIds
-  let lineupIds = lineup.map(grade => grade.lineupIdin)
-  // Filters out all the duplicates and get a list of unique Ids
+  let lineupIds = lineup.map(player => player.teamId)
   let uniqueIds = []
+  let numberOfUses = []
 
-  lineupIds.forEach(lineupIdin => {
-    if (!uniqueIds.includes(lineupIdin)) {
-      uniqueIds.push(lineupIdin)
+  lineupIds.forEach(teamId => {
+    if (!uniqueIds.includes(teamId)) {
+      uniqueIds.push(teamId)
     }
   })
 
-  let numberOfUses = []
-
   uniqueIds.forEach(uniqueId => {
-    let count = lineupIds.filter(lineupIdin => lineupIdin === uniqueId).length
+    let count = lineupIds.filter(teamId => teamId === uniqueId).length
 
     numberOfUses.push(count)
   })
 
-  return Math.max(...numberOfUses) === 2
+  if (Math.max(...numberOfUses) <= 2) {
+    return true
+  } else {
+    return false
+  }
 }
 
 
 // 3. Lineups may not contain more than 3 players from a single game
 const filterGames = (lineup) => {
-  let individGameID = lineup.map(game => game.gamerId)
+  let individGameID = lineup.map(game => game.gameId)
   let uniqueGameId = []
+  let numberOfGames = []
 
-  individGameID.forEach(gamerId => {
-    if (!uniqueGameId.includes(gamerId)) {
-      uniqueGameId.push(gamerId)
+  individGameID.forEach(gameId => {
+    if (!uniqueGameId.includes(gameId)) {
+      uniqueGameId.push(gameId)
     }
   })
 
-  let numberOfUses = []
+  uniqueGameId.forEach(uniqueId2 => {
+    let count = individGameID.filter(gameId => gameId === uniqueId2).length
 
-  uniqueGameId.forEach(uniqueId => {
-    let count = individGameID.filter(gamerId => gamerId === uniqueId).length
-
-    numberOfUses.push(count)
+    numberOfGames.push(count)
   })
 
-  return Math.max(...numberOfUses) === 3
+  if (Math.max(...numberOfGames) <= 3) {
+    return true
+  } else {
+    return false
+  }
 }
-
 // 4. Lineups must contain exactly 3 players with the position of 'OF' 
 // and must also contain exactly 1 player from each of the following positions: 
 // 'P', 'C', '1B', '2B', '3B', 'SS'
@@ -88,12 +96,13 @@ const filterPositions = (lineup) => {
   let OFCount = lineup.filter(it => it.position.includes('OF'))
   const otherPosition = ['P', 'C', '1B', '2B', '3B', 'SS']
 
-  return (lineup.includes(otherPosition) && (OFCount.length === 3))
+  return (OFCount.length === 3)
 }
 
+console.log('Validate Lineup')
 console.log(validateLineup(lineup))
 console.log('Salary Total')
-console.log(salaryTotal)
+console.log((salaryTotal(lineup)))
 console.log('No more than 2 players')
 console.log(filterLineup(lineup))
 console.log('No more than 3 players in single game')
